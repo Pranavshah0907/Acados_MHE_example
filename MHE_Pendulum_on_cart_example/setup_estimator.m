@@ -24,7 +24,6 @@ ny_0 = length(R_mhe) + length(Q_mhe) + length(Q0_mhe); % h(x), w and arrival cos
 %% arguments
 compile_interface = 'true'; %'auto';
 codgen_model = 'true';
-gnsf_detect_struct = 'false'; % check here
 
 %% args
 
@@ -126,6 +125,7 @@ end
 ocp_mhe_opts.set('nlp_solver', nlp_solver);
 ocp_mhe_opts.set('nlp_solver_exact_hessian', nlp_solver_exact_hessian);
 ocp_mhe_opts.set('sim_method', sim_method);
+ocp_mhe_opts.set('levenberg_marquardt', 1e-2);
 
 
 if (strcmp(nlp_solver, 'sqp'))
