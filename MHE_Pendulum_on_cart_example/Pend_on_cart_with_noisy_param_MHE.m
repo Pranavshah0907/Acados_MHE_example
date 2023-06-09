@@ -1,4 +1,4 @@
-clear all; clc;
+% clear all; clc;
 
 %% MHE model and estimator
 
@@ -39,23 +39,29 @@ w_est = zeros(N,nx_augmented);
 l_est = zeros(N+1, 1);
 
 x0_bar = [0.0, 0.0, 0.0, 0.0, 0.2];
+% x0_bar = [0.0, pi, 0.0, 0.0, 1];
 
-estimator.set('print_level',1);
+estimator.set('print_level',4);
 
 yref_0 = zeros(nx + 2*nx_augmented, 1); 
 yref_0(1:nx) = y_sim(:,1);
 yref_0(nx+nx_augmented+1:end) = x0_bar;
 
+
 % initialize y, p
+
 estimator.set('cost_y_ref', yref_0, 0);
 estimator.set('p', u_sim(1) , 0);
+
 yref = zeros(2*nx,1);
 for j=1:N-1
+
     yref = zeros(nx + nx_augmented,1);
 
     yref(1:nx) = y_sim(:,j);
     estimator.set('cost_y_ref', yref, j);
     estimator.set('p', u_sim(j), j);
+
 end
 
 % intitalize x trajectory
