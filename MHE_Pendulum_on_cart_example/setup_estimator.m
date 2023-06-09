@@ -24,15 +24,16 @@ ny_0 = length(R_mhe) + length(Q_mhe) + length(Q0_mhe); % h(x), w and arrival cos
 %% arguments
 compile_interface = 'true'; %'auto';
 codgen_model = 'true';
-gnsf_detect_struct = 'true';
+gnsf_detect_struct = 'false'; % check here
 
 %% args
 
 nlp_solver = 'sqp';
 nlp_solver_max_iter = 200;
 nlp_solver_exact_hessian = 'false';
-regularize_method = 'project_reduc_hess';
-qp_solver = 'partial_condensing_hpipm';
+regularize_method = 'project_reduc_hess'; % check here
+qp_solver = 'partial_condensing_hpipm'; % 'FULL_CONDENSING_QPOASES'
+qp_solver = 'full_condensing_qpoases'; % 'FULL_CONDENSING_QPOASES'
 qp_solver_cond_N = 5;
 qp_solver_cond_ric_alg = 0;
 qp_solver_ric_alg = 0;
@@ -42,7 +43,7 @@ qp_solver_max_iter = 100;
 sim_method = 'erk';
 % sim_method = irk;
 
-cost_type = 'nonlinear_ls';
+
 sim_method_num_stages = 4;
 sim_method_num_steps = 3;
 
@@ -88,7 +89,6 @@ else % irk irk_gnsf
 end
 
 % SET INITIAL PARAMETER VALUES MISSING HERE?
-
 % set y_ref for all stages
 yref = zeros(ny,1);
 yref_e = zeros(ny_e,1);
@@ -110,10 +110,10 @@ ocp_mhe_opts.set('compile_interface', compile_interface);
 ocp_mhe_opts.set('codgen_model', codgen_model);
 ocp_mhe_opts.set('param_scheme_N', N);
 
-ocp_mhe_opts.set('regularize_method', regularize_method);
+% ocp_mhe_opts.set('regularize_method', regularize_method);
 
 ocp_mhe_opts.set('qp_solver', qp_solver);
-ocp_mhe_opts.set('qp_solver_cond_ric_alg', qp_solver_cond_ric_alg);
+% ocp_mhe_opts.set('qp_solver_cond_ric_alg', qp_solver_cond_ric_alg);
 ocp_mhe_opts.set('qp_solver_warm_start', qp_solver_warm_start);
 ocp_mhe_opts.set('qp_solver_iter_max', qp_solver_max_iter);
 if (~isempty(strfind(qp_solver, 'partial_condensing')))
@@ -137,7 +137,9 @@ disp(ocp_mhe_opts.opts_struct);
 
 estimator = acados_ocp(ocp_mhe, ocp_mhe_opts);
 
+% estimator.set('cost_W', W);
 estimator.set('cost_W', W_0, 0);
-
+for j=1:N-1
+    estimator.set('cost_W', W, j);
 end
 

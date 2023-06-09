@@ -1,4 +1,4 @@
-clear all; clc;
+% clear all; clc;
 
 %% MHE model and estimator
 
@@ -44,36 +44,45 @@ w_est = zeros(N,nx_augmented);
 l_est = zeros(N+1, 1);
 
 x0_bar = [0.0, 0.0, 0.0, 0.0, 0.2];
+% x0_bar = [0.0, pi, 0.0, 0.0, 1];
 
-estimator.set('print_level',1);
+estimator.set('print_level',4);
 
 yref_0 = zeros(nx + 2*nx_augmented, 1); 
 yref_0(1:nx) = y_sim(:,1);
 yref_0(nx+nx_augmented+1:end) = x0_bar;
 
-estimator.set('cost_y_ref', yref_0, 0);
-estimator.set('p', u_sim(1) , 0);
-
 % Setting intital trajectory
+x_traj_init = [linspace(0, 0, N+1); linspace(pi, 0, N+1); linspace(0, 0, N+1); linspace(0, 0, N+1); linspace(0, 0, N+1)];
 
-% ocp_mhe.set('constr_x0',x0_bar) --> option 1
+estimator.set('cost_y_ref', yref_0, 0);
+% estimator.set('cost_y_ref_0', yref_0, 0);
+% estimator.set('cost_y_ref_e', yref_0, 0);
+estimator.set('p', u_sim(1) , 0);
+% estimator.set('init_x', x_traj_init(:,1), 0); 
+% estimator.set('init_x', x0_bar, 0);
+estimator.set('x', x0_bar, 0);
+% estimator.set('x', [x_sim(:,1); 0.2], 0); 
 
-% x_traj_init = [linspace(0, 0, N+1); linspace(pi, 0, N+1); linspace(0, 0, N+1); linspace(0, 0, N+1); linspace(0, 0, N+1)];
+
+% estimator.set('constr_x0',x0_bar); % --> option 1
 % ocp_mhe.set('constr_x0', x_traj_init); --> Option 2
 
 yref = zeros(2*nx,1);
 
 for j=1:N-1
-    yref = zeros(nx + nx_augmented,1);
-
-    yref(1:nx) = y_sim(:,j);
-    estimator.set('cost_y_ref', yref, j);
-
-    p = u_sim(j);
-    estimator.set('p', p, j); 
-
-    % ocp_mhe.set('x',x0_bar,j); 
+            yref = zeros(nx + nx_augmented,1);
+            yref(1:nx) = y_sim(:,j+1);
+            estimator.set('cost_y_ref', yref, j);
+            p = u_sim(j+1);
+            estimator.set('p', p, j);
+%             estimator.set('init_x', x_traj_init(:,j+1), j);
+%             estimator.set('init_x', [x_sim(:,j+1); 0.2], j);
+%             estimator.set('init_x', x0_bar, j);
+            estimator.set('x', x0_bar, j); 
 end
+% estimator.set('init_x', x0_bar, N);  
+estimator.set('x', x0_bar, N);  
 
 tic;
 
