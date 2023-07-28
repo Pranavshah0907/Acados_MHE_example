@@ -1,3 +1,16 @@
+# MHE example for thermal derating
+
+The folder MHE_BlackBox contains all the files for the MHE being developed using a black box.
+The main scripts are:
+1. **MAIN_MHE_Linear_cost_working** : Working file for linear cost function, which complies and also gives decent results.
+2. **MAIN_MHE_Nonlinear_cost** : Here the code is set for non-linear cost function but can also be changed to linear and the code functions properly.
+
+The models are in the **05_model** folder.
+
+After the models are compiled the main simulation can be run using the **Main_simulation_loop** file.
+
+-----------------------------------------------------------------------------------------------------
+
 # Acados_MHE_example
 
 The folder contains the files for the Pendulum On Cart MHE estimation example using Acados.
