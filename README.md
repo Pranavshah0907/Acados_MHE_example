@@ -8,7 +8,7 @@ The models are defined in the folder **05_model**. (OCP_MHE_model, OCP_MHE_S02 a
 
 The neural network is in the folder **02_parameter**
 
-And the initial files with some variables required are in the **01Init** folder.
+And the initial files with some variables required are in the **01_Init** folder.
 
 The folder also contains a pdf called **MHE_Problem_Formulation.pdf** which describes how the acados formulation is setup, The matrices for cost, reference etc.
 
