@@ -1,4 +1,22 @@
-# MHE example for thermal derating
+# MHE new approach (Taking variance as control)
+
+The folder contains the main MHE called **Main_script**. 
+The models are set for both linear and nonlinear cost types.
+The models are defined in the folder **05_model**. (OCP_MHE_model, OCP_MHE_S02 and OCP_MHE_S04)
+The neural network is in the folder **02_parameter**
+And the initial files with some variables required are in the **01Init** folder.
+The folder also contains a pdf called **MHE_Problem_Formulation.pdf** which describes how the acados formulation is setup, The matrices for cost, reference etc.
+The parameters are stored in the **pararmter_remake.mat**.
+
+The problem is that the solver fails stat(4) after iteration 2.
+The model can be directly simulated by pasting the folder alongside the installed acados folder.
+
+
+--------------------------------------------------------------------------------------------------
+
+
+# MHE_BlackBox 
+example for thermal derating
 
 The folder MHE_BlackBox contains all the files for the MHE being developed using a black box.
 The main scripts are:
