@@ -59,7 +59,7 @@ M_fric_brk = SX.sym('M_fric_brk', 1);
 % Grade of the road / track 
 phi = SX.sym('phi', 1);
 v_r = SX.sym('v_r',1 );
-p = vertcat(M_EM_acc, M_EM_brk, M_fric_brk, phi, v_r); % phi (+ T_w_0 + T_r_0)
+p = vertcat(M_EM_acc, M_EM_brk, M_fric_brk, phi); % v_r);
 
 
 % T_w_0 = p(2);

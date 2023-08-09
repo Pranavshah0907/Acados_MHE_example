@@ -7,7 +7,7 @@ clear mex;
 idcs = strfind(projectRootDir,'\'); % find \ string
 userpath = projectRootDir(1:idcs(end)-1); % get parent directory
 
-pathstr = '\master_thesis_pranav\PS\MHE_newapproach';
+pathstr = '\MHE_newapproach';
 cd([userpath, pathstr]);
 
 % check that env.sh has been run / acados stuff
@@ -101,7 +101,6 @@ Vu_0 = zeros(nout_0, dims.nx);
 Vu_0(3,1) = 1.0;
 Vu_0(4,2) = 1.0;
 
-% % Vx_0; Vu_0; y_ref; y_ref_0 --> need to be defined before the
 % % simualtion
 % W = [10 0 0 0 0; % y1
 %     0 10 0 0 0;  % y2
@@ -115,8 +114,6 @@ Vu_0(4,2) = 1.0;
 % % W(4, 4) =  R(3,3); % u3
 % 
 % W_0 = eye(nout_0, nout_0);
-% 
-% % The W and W_0 are the matrices of Q and R which needs to be defined.
 
 %% Weigting Matrices
 
@@ -188,14 +185,14 @@ end
 ocp_model.set('dyn_type', 'discrete');
 ocp_model.set('dyn_expr_phi', model.expr_phi);
 
-% % state bounds
-ocp_model.set('constr_Jbx', Jbx);
-ocp_model.set('constr_lbx', lbx);
-ocp_model.set('constr_ubx', ubx);
-% % input bounds
-ocp_model.set('constr_Jbu', Jbu);
-ocp_model.set('constr_lbu', lbu);
-ocp_model.set('constr_ubu', ubu);
+% % % state bounds
+% ocp_model.set('constr_Jbx', Jbx);
+% ocp_model.set('constr_lbx', lbx);
+% ocp_model.set('constr_ubx', ubx);
+% % % input bounds
+% ocp_model.set('constr_Jbu', Jbu);
+% ocp_model.set('constr_lbu', lbu);
+% ocp_model.set('constr_ubu', ubu);
 
 % set y_ref for all stages
 yref = zeros(nout, 1);
@@ -281,17 +278,16 @@ disp('Model set up successfully');
 % end
 
 if open_loop
-    load("input_data_processed.mat")
-    load('parameter_remake.mat')
+    load("T_wr_orig_v2.mat")
+    load('parameter_input_v2.mat')
     
     mean_m = 0; % Percentage error mean
     st_d_m = 0.2; % Standard deviation of error
     
-    T_wr_noisy2 = T_wr_orig.Data + st_d_m*randn(size(T_wr_orig.Data)) - (mean_m*T_wr_orig.Data);
-    T_wr_noisy2 = T_wr_noisy2';
-    
+    T_wr_noisy = T_wr_orig_v2 + st_d_m*randn(size(T_wr_orig_v2)) - (mean_m*T_wr_orig_v2);
+
     % u_sim = torque_data;
-    y_sim = T_wr_noisy2;
+    y_sim = T_wr_noisy';
     
     x_est = zeros(N+1,dims.nx);
     w_est = zeros(N,dims.nx);
@@ -361,25 +357,27 @@ end
 %% closed loop
 
 if closed_loop
-    N_sim = 2;
+    N_sim = 1000;
     
-    load("input_data_processed.mat")
-    load('parameter_remake.mat')
+    load("T_wr_orig_v2.mat")
+    load('parameter_input_v2.mat')
     
     mean_m = 0; % Percentage error mean
     st_d_m = 0.2; % Standard deviation of error
     
-    T_wr_noisy2 = T_wr_orig.Data + st_d_m*randn(size(T_wr_orig.Data)) - (mean_m*T_wr_orig.Data);
-    T_wr_noisy2 = T_wr_noisy2';
+    % T_wr_noisy2 = T_wr_orig.Data + st_d_m*randn(size(T_wr_orig.Data)) - (mean_m*T_wr_orig.Data);
+    % T_wr_noisy2 = T_wr_noisy2';
     
+    T_wr_noisy = T_wr_orig_v2 + st_d_m*randn(size(T_wr_orig_v2)) - (mean_m*T_wr_orig_v2);
+
     % u_sim = torque_data;
-    y_sim = T_wr_noisy2;
+    y_sim = T_wr_noisy';
     
     % x_est = zeros(N+1,dims.nx);
     x_est = zeros(dims.nx, N_sim-N);
     w_est = zeros(N,dims.nx);
     
-    x0_bar = [60.0, 60.0];
+    x0_bar = [60.0; 60.0];
     
     % temp = ones(1,32);
     % x0_init = [60, 60, 1, temp];
@@ -395,11 +393,11 @@ if closed_loop
     for i=1:N_sim-N
         yref_0 = zeros(nout_0, 1); 
         yref_0(1:2) = y_sim(:,1);
-        yref_0(5:end) = x0_bar;
+        yref_0(5:end) = x0_bar(1:2,1);
         
         % initialize y, p
         estimator.set('cost_y_ref', yref_0, 0);
-        estimator.set('p', parameter_remake(:,1) , 0);
+        estimator.set('p', parameter_input_v2(:,1) , 0);
     
         for j=1:N-1
             yref = zeros(nout,1);
@@ -407,7 +405,7 @@ if closed_loop
             yref(1:2) = y_sim(:,j+i);
             estimator.set('cost_y_ref', yref, j);
         
-            estimator.set('p', parameter_remake(:,j+i), j);
+            estimator.set('p', parameter_input_v2(:,j+i), j);
         end
         
         % solve ocp
@@ -417,9 +415,9 @@ if closed_loop
         disp(status);
         estimator.print('stat');
         
-        x_est(:, n) = estimator.get('x', N);
+        x_est(:, i) = estimator.get('x', N);
     
-        w_est = estimator.get('u');
+        % w_est(:, i) = estimator.get('u');
         x0_bar = estimator.get('x',1);
     
     end

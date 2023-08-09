@@ -1,5 +1,4 @@
 %% BOF
-
 timestep = options.Ts; 
 % %% extract states
 % ct1 = x(); % Cell States
@@ -99,7 +98,7 @@ expr_phi = expr_phi + sym_w;
 y = [T_w_1; T_r_1; w_Tw; w_Tr];
 % y = vertcat(x,sym_w);
 
-y_0  = [T_w_1; T_r_1; w_Tw; w_Tr; T_w_1; T_r_1;]; % The last 2 T_w_1 and T_r_1 will be used for arrival cost. Check if they have an influence.
+y_0  = [T_w_1; T_r_1; w_Tw; w_Tr; T_w_1; T_r_1;]; % The last 2 T_w_1 and T_r_1 will be used for arrival cost.
 % y_0  = vertcat(x, sym_w, x);
 
 % Lagrange Term, integral costs over the full horizon
@@ -118,9 +117,9 @@ y_0  = [T_w_1; T_r_1; w_Tw; w_Tr; T_w_1; T_r_1;]; % The last 2 T_w_1 and T_r_1 w
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % h = []; % Todo:v_1<V_ref while decelerating
-h = [M_EM_acc * M_EM_brk; M_EM_acc * M_fric_brk; (abs(M_EM_brk)+M_EM_acc)*v_1*FDR/r_dyn; (v_r-v_1)]; % *sign(M_EM_brk+M_fric_brk)
+% h = [M_EM_acc * M_EM_brk; M_EM_acc * M_fric_brk; (abs(M_EM_brk)+M_EM_acc)*v_1*FDR/r_dyn; (v_r-v_1)]; % *sign(M_EM_brk+M_fric_brk)
 % h_e = [];
-h_e = [M_EM_acc * M_EM_brk; M_EM_acc * M_fric_brk; (abs(M_EM_brk)+M_EM_acc)*v_1*FDR/r_dyn; (v_r-v_1)];
+% h_e = [M_EM_acc * M_EM_brk; M_EM_acc * M_fric_brk; (abs(M_EM_brk)+M_EM_acc)*v_1*FDR/r_dyn; (v_r-v_1)];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % linear constraints
@@ -129,5 +128,5 @@ h_e = [M_EM_acc * M_EM_brk; M_EM_acc * M_fric_brk; (abs(M_EM_brk)+M_EM_acc)*v_1*
 % yN = gN(xN)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-g = [];
-g_e = [];
+% g = [];
+% g_e = [];
